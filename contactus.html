@@ -70,22 +70,27 @@
         <p><a href="https://lin.ee/dEskHnp" target="_blank" rel="noopener">舒適加Line：@care8</a></p>
         <p><a href="https://www.facebook.com/comfyplus.tw" target="_blank" rel="noopener">舒適加Facebook：舒適加</a></p>
       </div>
-      <form class="contact-form" id="contactForm">
-        <label>姓名<input type="text" id="cf-name"></label>
-        <label>Email<input type="email" id="cf-email"></label>
-        <label>公司<input type="text" id="cf-company"></label>
-        <label>電話 *<input type="tel" id="cf-phone" required></label>
-        <label>地址<input type="text" id="cf-address"></label>
+      <form class="contact-form" id="contactForm" action="https://formsubmit.co/dhmall.care@gmail.com" method="POST">
+        <!-- FormSubmit 設定隱藏欄位 -->
+        <input type="hidden" name="_subject" value="【舒適加】網站聯絡表單新留言">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+
+        <label>姓名<input type="text" id="cf-name" name="姓名"></label>
+        <label>Email<input type="email" id="cf-email" name="Email"></label>
+        <label>公司<input type="text" id="cf-company" name="公司"></label>
+        <label>電話 *<input type="tel" id="cf-phone" name="電話" required></label>
+        <label>地址<input type="text" id="cf-address" name="地址"></label>
         <label>留言主題 *
-          <select id="cf-subject" required>
+          <select id="cf-subject" name="留言主題" required>
             <option value="">選擇一個選項</option>
             <option>採購業務洽詢</option>
             <option>合作事宜</option>
             <option>其他</option>
           </select>
         </label>
-        <label>留言資訊 *<textarea id="cf-message" rows="5" required></textarea></label>
-        <button type="submit" class="btn-teal full">寄出</button>
+        <label>留言資訊 *<textarea id="cf-message" name="留言資訊" rows="5" required></textarea></label>
+        <button type="submit" class="btn-teal full" id="submitBtn">寄出</button>
       </form>
     </div>
   </section>
@@ -104,6 +109,7 @@
     var notice = document.getElementById('formNotice');
     var noticeText = document.getElementById('formNoticeText');
     var noticeClose = document.getElementById('formNoticeClose');
+    var submitBtn = document.getElementById('submitBtn');
 
     function showNotice(msg){
       noticeText.textContent = msg;
@@ -118,8 +124,7 @@
     form.addEventListener('submit', function(e){
       e.preventDefault();
 
-      // 手動檢查必填欄位；若有缺漏，直接跳出提示（而不是只靠瀏覽器原生驗證，
-      // 避免使用者以為按了「寄出」卻毫無反應）。
+      // 手動檢查必填欄位
       var required = [
         ['cf-phone', '電話'],
         ['cf-subject', '留言主題'],
@@ -134,31 +139,41 @@
         }
       }
 
-      var val = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
-      var name = val('cf-name'), email = val('cf-email'), company = val('cf-company'),
-          phone = val('cf-phone'), address = val('cf-address'),
-          subject = val('cf-subject'), message = val('cf-message');
-      var mailSubject = '舒適加網站聯絡表單' + (subject ? '：' + subject : '');
-      var mailBody = [
-        '姓名：' + name,
-        'Email：' + email,
-        '公司：' + company,
-        '電話：' + phone,
-        '地址：' + address,
-        '留言主題：' + subject,
-        '',
-        '留言資訊：',
-        message
-      ].join('\n');
-      var mailtoUrl = 'mailto:dhmall.care@gmail.com'
-        + '?subject=' + encodeURIComponent(mailSubject)
-        + '&body=' + encodeURIComponent(mailBody);
+      // 按鈕狀態變更為寄送中
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '寄送中...';
+      }
 
-      // 這是純靜態網站，沒有後端伺服器，因此無法從瀏覽器端「保證」信件已送達。
-      // 這裡改為開啟使用者裝置上設定好的郵件軟體並帶出草稿信，同時誠實地提示
-      // 使用者下一步該做什麼，而不是宣稱一定寄送成功。
-      window.location.href = mailtoUrl;
-      showNotice('已為您開啟郵件軟體並帶出草稿信，請確認內容後按下「送出」完成寄送。若畫面沒有跳出郵件軟體（例如裝置尚未設定郵件帳號），請直接寄信至 dhmall.care@gmail.com，或透過電話 02-23080327／LINE @care8 與我們聯繫。');
+      var formData = new FormData(form);
+
+      // 使用 FormSubmit AJAX 端點非同步寄出
+      fetch('https://formsubmit.co/ajax/dhmall.care@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formData
+      })
+      .then(function(response) {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Form submission failed');
+      })
+      .then(function(data) {
+        showNotice('感謝您的留言！我們已收到您的訊息，將會儘快與您聯繫。');
+        form.reset(); // 清空表單內容
+      })
+      .catch(function(error) {
+        showNotice('訊息寄送失敗，請稍後再試。您也可以直接透過電話 02-23080327、信箱 dhmall.care@gmail.com 或 LINE @care8 與我們聯繫。');
+      })
+      .finally(function() {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '寄出';
+        }
+      });
     });
   })();
   </script>
@@ -235,15 +250,13 @@
 
 <script>
 (function(){
-  // Hide the header when scrolling down, slide it back in when scrolling up
-  // (matches the original site's sticky-header behaviour).
   var header = document.querySelector('.site-header');
   var mainnav = document.getElementById('mainNav');
   if (!header) return;
   var lastY = window.scrollY;
   var HIDE_AFTER = 60;
   window.addEventListener('scroll', function(){
-    if (mainnav && mainnav.classList.contains('open')) return; // keep header visible while the mobile menu is open
+    if (mainnav && mainnav.classList.contains('open')) return;
     var y = window.scrollY;
     if (y > lastY && y > HIDE_AFTER) {
       header.classList.add('header-hidden');
@@ -255,7 +268,6 @@
 })();
 
 (function(){
-  // Mobile hamburger menu: toggles the nav list open/closed on small screens.
   var toggle = document.getElementById('navToggle');
   var nav = document.getElementById('mainNav');
   if (!toggle || !nav) return;
@@ -264,7 +276,6 @@
     toggle.classList.toggle('open', isOpen);
     toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   });
-  // Tapping a menu link closes the menu (useful for same-page anchors / after navigation).
   nav.querySelectorAll('a').forEach(function(a){
     a.addEventListener('click', function(){
       nav.classList.remove('open');
@@ -272,7 +283,6 @@
       toggle.setAttribute('aria-expanded', 'false');
     });
   });
-  // If the window is resized back up past the mobile breakpoint, reset the menu state.
   window.addEventListener('resize', function(){
     if (window.innerWidth > 767 && nav.classList.contains('open')) {
       nav.classList.remove('open');
@@ -283,19 +293,12 @@
 })();
 
 (function(){
-  // "每一刻安心/每一天舒適" banner: the background photo stays fixed in the
-  // viewport (background-attachment:fixed, in CSS) and its position never
-  // shifts, while it slowly zooms in as the section scrolls through view.
-  // IMPORTANT: this animates background-size (in px), never a transform —
-  // a transform on this element would silently turn off background-
-  // attachment:fixed and make the image drift instead of staying anchored
-  // to the viewport.
   var section = document.querySelector('.tagline-banner');
   var bg = document.querySelector('.tagline-bg');
   if (!section || !bg) return;
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) return;
-  var IMG_W = 1907, IMG_H = 913; // natural size of 99ec98fdb81945c29c25a3ad6c5606b1.jpg
+  var IMG_W = 1907, IMG_H = 913;
   var MAX_SCALE = 1.18;
   function onScroll(){
     var vw = window.innerWidth || document.documentElement.clientWidth;
@@ -314,14 +317,6 @@
 })();
 
 (function(){
-  // Secondary-page hero photos (about/service/buy/faq/contactus): a plain
-  // <img> cropped to a fixed 633px-tall box (object-fit:cover, in CSS).
-  // Starts at 1x (normal size) when the page loads, and zooms in to 1.5x
-  // as the page scrolls, reaching 1.5x once the page has scrolled 1920px
-  // — driven by absolute scroll position (window.scrollY),
-  // not by the section's own position in the viewport. Unlike the tagline
-  // banner above, this image has no background-attachment:fixed to
-  // protect, so a straightforward transform:scale() is safe here.
   var img = document.querySelector('.page-hero-photo img');
   if (!img) return;
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
