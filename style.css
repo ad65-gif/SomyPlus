@@ -1,0 +1,1148 @@
+/* ===================================================
+   舒適加 Comfy Plus — static responsive reproduction
+   =================================================== */
+
+:root{
+  --gold: #d6b66a;
+  --gold-dark: #c4a253;
+  --teal: #4aa784;
+  --teal-dark: #3c8e6f;
+  --text-dark: #3c3c3c;
+  --text-mid: #6b6b6b;
+  --bg-card: #f2f0ee;
+  --bg-alt: #faf8f6;
+  --max-w: 900px
+}
+
+*{ box-sizing: border-box; }
+html{ overflow-x:hidden; }
+body{ margin:0; padding:0; width:100%; }
+body{
+  font-family: "Helvetica Neue",worksans-extralight,"work sans",Helvetica,Arial,"PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;
+  color: var(--text-dark);
+  line-height: 1.7;
+  background:#fff;
+}
+a{ text-decoration:none; color:inherit; color: #505050;}
+ul{ margin:0; padding:0; list-style:disc;    padding-left: 20px; }
+img{ max-width:100%; display:block; }
+h1,h2,h3,h4{ margin:0; font-weight:700; font-family:inherit; }
+
+.container{
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 0px;
+}
+.hero-container{
+  max-width: 1527px;
+  margin: 0 auto;
+}
+/* Full-width bar used inside header/footer: no centered max-width, spans the
+   entire viewport edge-to-edge (matches the original site's full-screen
+   header/footer layout), with its own comfortable side padding. */
+.bar{
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 48px;
+}
+
+/* ---------- Header ---------- */
+.site-header{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  width: 100%;
+  transition: transform .32s ease;
+  border-bottom: 1px solid #cccccc;
+}
+/* Slides the header up out of view when scrolling down the page, and
+   slides it back in as soon as the user scrolls back up (matches the
+   original site's sticky-header entrance/exit motion). */
+.site-header.header-hidden{
+  transform: translateY(-100%);
+}
+.topbar{
+  border-bottom: 1px solid #ccc;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+.topbar-inner{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 22px 60px;
+  justify-content: flex-end;
+}
+.topbar-inner a{
+  padding: 0 16px;
+  border-left: 1px solid #ccc;
+  line-height: 2.4;
+  transition: color .15s ease;
+}
+/* Hovering anywhere on a topbar link tints its text; for the two links that
+   carry an icon, the icon-swap rules further down recolour the icon to match
+   at the same time, so the whole link changes together. */
+.topbar-inner a:hover{ color: var(--teal-dark); }
+.topbar-inner a:first-child{
+  border-left: none;
+  padding-left: 0;
+}
+.topbar-inner a:last-child{
+  padding-right: 0;
+}
+.topbar-icon-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.topbar-icon{
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+.mainbar-inner{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding: 24px 60px 24px 60px;
+  align-items: flex-end;
+  margin-bottom: -1px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  min-width: 90px;
+}
+.logo-img{
+  width: 94px;
+  height: auto;
+}
+.footer-logo-col .logo-img{ width: 96px; }
+.tagline{ flex: 1 1 320px; min-width: 260px; }
+.tagline h1{ font-size: 24px; }
+.tagline p{ font-size: 14px; color: var(--text-mid); margin: 0;font-weight: 600; }
+.mainnav{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: -24px;
+  color: #909090;
+}
+.mainnav a{ padding: 0 10px 6px 10px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.mainnav a.active{ color: var(--teal); border-bottom-color: var(--teal); }
+.mainnav a:hover{ color: #999999; }
+
+/* Hamburger toggle button — hidden on desktop/tablet, shown only at the
+   phone breakpoint below (see the max-width:767px block). */
+.nav-toggle{
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-toggle span{
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-dark);
+  border-radius: 1px;
+  transition: transform .25s ease, opacity .2s ease;
+}
+.nav-toggle.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2){ opacity: 0; }
+.nav-toggle.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- Hero ----------
+   The hero is NOT a full-bleed background: a rounded-rectangle photo box
+   (.hero-box, matching the page container's width) sits inside the section.
+   The product photo overlaps the box's left side and overflows below its
+   bottom edge; a semi-transparent white card with the heading + CTA button
+   sits on the box, right of center. The scroll-mouse indicator is a sibling
+   OUTSIDE/below the box, not inside it. Proportions below are taken from
+   the live reference site's own box (1527x427) and its product photo /
+   text-card offsets, expressed as percentages of the box so they scale
+   with the container. */
+.hero{
+  position: relative;
+  /* Extra bottom padding gives the product photo (which intentionally
+     overflows below .hero-box) and the scroll indicator room to sit
+     inside this section without spilling into the next one. */
+  padding: 56px 0 170px;
+  background: #fff;
+}
+.hero-box-wrap{
+  position: relative;
+  width: 100%;
+}
+.hero-box{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1527 / 427;
+  border-radius: 23px;
+  /* overflow: hidden; */
+  /* background-color: #3a3a3a; */
+}
+/* The photo lives on its own layer inside .hero-box so it can animate on
+   page load independent of the product photo (which stays still, no
+   animation) and the box itself (whose own size is fixed immediately via
+   aspect-ratio, so nothing below the hero jumps around while this plays).
+   It grows from 0 height up to full, expanding from the vertical CENTER
+   outward (matching the reference site), via scaleY rather than the
+   height property. */
+.hero-box-bg{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform-origin: 50% 50%;
+  animation: heroBoxReveal .9s cubic-bezier(.16,.84,.44,1) both;
+  border-radius: 20px;
+}
+@keyframes heroBoxReveal{
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce){
+  .hero-box-bg{ animation: none; }
+}
+.hero-text{
+  position: absolute;
+  left: 46.5%;
+  top: 70px;
+  background: rgba(255, 255, 255, .82);
+  border-radius: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 40px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.hero-text h2{
+  color:#505050;
+  font-size: clamp(13px, 2.7vw, 36px);
+  line-height: 1.3;
+  margin: 0 0 clamp(6px, 1.4vw, 20px);
+  font-weight: 500;
+}
+.hero-product{
+  position: absolute;
+  left: 18.6%;
+  top: 11.2%;
+  width: 25.3%;
+  z-index: 3;
+}
+.hero-product img{
+  width: 100%;
+  height: auto;
+  /* Matches the width/height attributes on the <img> tag: reserves the
+     correct box (so .hero-product isn't 0-height and doesn't "pop" into
+     size) even before the PNG itself has finished downloading. */
+  aspect-ratio: 387 / 520;
+  display: block;
+  filter: drop-shadow(0 12px 24px rgba(0,0,0,.35));
+}
+/* The product photo is intentionally static — no load-in animation, no
+   scroll effect. Only the background photo above (.hero-box-bg) animates. */
+@media (max-width: 767px){
+  /* Overlay percentages get too cramped for legible text on phones, so the
+     product photo and text card drop into normal flow below the box photo
+     instead of overlaying it. */
+  .hero-box{ aspect-ratio: 4 / 3;height: 340px; display: flex;justify-content: center;}
+  .hero-box-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .hero-product{
+    position: static;
+    width: 255%;
+    max-width: 260px;
+    margin: 200px auto -6px;
+    z-index: 3;
+  }
+  .filter-section{padding-top: 130px !important;}
+  .hero-text{
+    position: absolute;
+    width: 80%;
+    max-width: 340px;
+    margin: 0 auto;
+    align-items: center;
+    text-align: center;
+    padding: 20px 24px;
+    top: 25px;
+    left: auto;
+    z-index: 4;
+    transform: none;
+  }
+  .hero-text h2{ font-size: 20px; }
+  .hero-container {
+    max-width: calc(100vw - 60px);
+  }
+}
+
+/* ---------- Scroll-down indicator (outside/below the hero photo box) ---------- */
+.scroll-indicator{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  opacity: .85;
+}
+
+.scroll-indicator .wheel-arrow{
+  animation: wheelArrow 1.6s ease-in-out infinite;
+}
+@keyframes wheelArrow{
+  0%   { transform: translateY(0);    opacity: 0; }
+  15%  { transform: translateY(1px);  opacity: 1; }
+  85%  { transform: translateY(8px);  opacity: 1; }
+  100% { transform: translateY(10px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .scroll-indicator .wheel-arrow{ animation: none; }
+}
+
+/* ---------- QR code badges (real QR + small social-icon overlay) ----------
+   Footer default size is 63x63px, no border/frame around the code itself.
+   The homepage "聯絡我們" band uses the larger .qr-badge-light variant (73px). */
+.qr-badge{ position: relative; width: 63px; height: 63px; flex-shrink: 0; }
+.qr-badge .qr-code{
+  width: 63px; height: 63px;
+  border: none; border-radius: 4px;
+  background: #fff;
+}
+.qr-badge .qr-icon{
+  position: absolute; right: -5px; bottom: -5px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px #eee;
+  padding: 2px;
+  box-sizing: content-box;
+  display: flex;
+}
+.qr-badge-light{ width: 73px; height: 73px; }
+.qr-badge-light .qr-code{ width: 73px; height: 73px; background: #fff; }
+
+/* ---------- Link image hover colour (icon-swap) ----------
+   Used by every linked image that has to recolour on hover: the topbar
+   LINE / Facebook icons, the header and footer 舒適加 logo, and the footer
+   social + QR badge icons. Each one is a small stack of two identical-size
+   images — the normal grey one and a pre-coloured #3c8e6f copy — that
+   cross-fade on hover.
+   (A CSS mask-image of the SVG would let a hover color apply without a
+   second file, but mask-image on a local SVG silently fails to render
+   under the file:// protocol in some browsers, which is how this site is
+   often previewed before upload — this opacity cross-fade works
+   identically opened directly from disk or served over http/https.)
+   Note: the wrapper must have a resolvable height, since both images are
+   absolutely positioned and so contribute nothing to its layout size. */
+.icon-swap{
+  position: relative;
+  display: inline-block;
+}
+.icon-swap img{
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  transition: opacity .15s ease;
+}
+.icon-swap .icon-hover{ opacity: 0; }
+a:hover .icon-swap .icon-base{ opacity: 0; }
+a:hover .icon-swap .icon-hover{ opacity: 1; }
+.footer-social-icons .icon-swap{ width: 21px; height: 21px; }
+.qr-badge .qr-icon .icon-swap{ width: 20px; height: 20px; display: block; }
+/* The logo art is square, so aspect-ratio supplies the height that the
+   existing .logo-img width rules (94 / 96 / 68px) would otherwise leave
+   as `auto` — i.e. zero — on this wrapper. */
+.logo .icon-swap{ aspect-ratio: 1 / 1; display: block; }
+.btn-gold{
+  display:inline-block;
+  background: var(--gold);
+  color:#2b2b2b;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.btn-gold:hover{ background: var(--gold-dark);color: #fff; }
+.btn-outline{
+  display:inline-block;
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  padding: 10px 26px;
+  font-size: 14px;
+  margin-top: 12px;
+  transition: background .2s ease, color .2s ease;
+}
+.btn-outline:hover{ background: var(--teal); color:#fff; }
+
+/* ---------- Filter section ---------- */
+.filter-section{ text-align:center; padding: 56px 0 0px; max-width: 979px; margin: 0 auto; }
+.section-title{ font-size: 36px; color: var(--text-mid); font-weight: 400; margin-bottom: 50px; text-align: center;margin-top: 30px;}
+.filter-tabs{
+  display:flex; justify-content:center; flex-wrap:wrap;
+  font-size: 15px; background:#fff;
+}
+.tab{
+  background:none; border:none; cursor:pointer;
+  padding: 16px 30px;
+  color: #505050; font-family: inherit; font-size: 20px;
+  transition: background .2s ease, color .2s ease;
+}
+.tab:hover{ color: #909090; }
+.tab.active{ background: var(--teal); color: #fff; }
+.tab.active:hover{ color: #fff; }
+
+/* Phone view swaps the tab row for a native dropdown. The <select> is built
+   by the page script, which also adds .has-filter-select — so if the script
+   never runs, the tab row below is left alone rather than hidden with no
+   replacement. The chevron is an inline SVG data URI so it still renders
+   when the site is opened straight from disk. */
+.filter-select{ display: none; }
+@media (max-width: 767px){
+  .has-filter-select .filter-tabs{ display: none; }
+  .has-filter-select .filter-select{
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 8px auto 0;
+    padding: 14px 44px 14px 20px;
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 1.4;
+    color: #fff;
+    background-color: var(--teal);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 9l7 7 7-7' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px 16px;
+  }
+  .has-filter-select .filter-select:focus-visible{
+    outline: 2px solid var(--teal-dark);
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- Product categories ---------- */
+.product-category{ padding: 50px 0; max-width: 979px; margin: 0 auto;border-top: 1px #ddd solid;}
+/* .product-category.alt{ background: var(--bg-alt); } */
+/* Dashed separator between consecutive category blocks (skips the very
+   first one automatically, since it has no preceding sibling). */
+.product-category + .product-category{
+  border-top: 1px #ddd solid;
+}
+.cat-row{
+  display:flex;
+  gap: 30px;
+  margin-top: 60px;
+}
+.cat-label{
+  flex: 0 0 220px;
+  padding-top: 8px;
+}
+.cat-badge-img{
+  width: 151px;
+  height: auto;
+  margin: 0 auto 12px auto;
+}
+.cat-label h3{
+  font-size: 26px;
+  line-height: 1.35;
+  margin-bottom: 10px;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 1px #909090 solid;
+  padding-bottom: 10px;
+}
+.cat-en{
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--text-mid);
+  text-align: center;
+}
+.cat-products{
+  flex: 1;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.product-card{ font-size: 16px;margin-bottom: 60px; }
+.product-img{
+  background: var(--bg-card);
+  border-radius: 4px;
+  padding: 24px;
+  margin-bottom: 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height: 468px;
+  overflow: hidden;
+}
+.product-img img{
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.product-card h4{ font-size: 24px; margin-bottom: 6px; line-height: 1.1; }
+.product-card .pack{ font-weight: 400; color: var(--text-mid); font-size: 16px; }
+.product-card .fit{ color: var(--teal); margin-bottom: 8px;font-weight: bolder; }
+.product-card ul li{ margin-bottom: 4px; color: var(--text-mid); }
+
+/* ---------- Tagline banner ("每一刻安心 每一天舒適") ----------
+   Background photo stays fixed in the viewport (background-attachment:fixed)
+   while the section scrolls over it, and slowly zooms in as the section
+   scrolls through view. The zoom is driven by JS setting an explicit
+   background-size in px (see TAIL) rather than a transform: a transform on
+   this element (or any ancestor) would silently break background-attachment:
+   fixed and make the image drift instead of staying anchored to the
+   viewport — background-size has no such side effect. No dark overlay on
+   top of the photo — just a text-shadow on the words for legibility. */
+.tagline-banner{
+  position: relative;
+  padding: 140px 0;
+  overflow: hidden;
+  text-align: center;
+}
+.tagline-bg{
+  position: absolute;
+  inset: 0;
+  background-image: url('images/99ec98fdb81945c29c25a3ad6c5606b1.jpg');
+  background-color: #555;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+.tagline-content{ position: relative; }
+.tagline-content p{
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.6;
+  margin:0;
+}
+
+/* ---------- About ----------
+   Plain white section: heading, copy and a link through to the full
+   About page. */
+.about{ padding: 100px 0; background:#fff; border-top: 1px #00000033 solid;}
+.about-content{ max-width: 640px; margin: 0 auto; text-align:center; }
+.about-content h2{ font-size: 26px; margin-bottom: 16px; }
+.about-content p{ font-size: 16px; line-height: 1.9; color: var(--text-mid); text-align:left; }
+
+/* ---------- Home contact band (homepage only) ----------
+   Teal full-bleed band with two equal-width white cards inside it:
+   left card holds the contact text, right card is an edge-to-edge photo. */
+.home-contact-band{ background: var(--teal); padding: 56px 0; }
+.home-contact-inner{
+  display:flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  min-height: 380px;
+  background: #fff;
+  overflow: hidden;
+  max-width: 1080px;
+}
+.home-contact-info{ flex: 1 1 380px; padding: 48px 56px; background:#fff; color: var(--text-dark); }
+.home-contact-info h2{ font-size: 26px; margin-bottom: 18px; color: var(--text-dark); }
+.home-contact-info p{ margin: 6px 0; font-size: 16px; color: var(--text-mid); }
+.home-contact-info a{ color: var(--text-mid); }
+.social-row{ display:flex; align-items:center; gap: 14px; margin-top: 18px; }
+.social-row p{ color: var(--text-dark); margin: -3px 0;}
+.home-contact-photo{ flex: 1 1 380px; min-height: 380px; }
+.home-contact-photo img{ width:100%; height:100%; object-fit: cover; display:block; }
+
+/* ---------- Shared site footer ----------
+   Five independent columns — LOGO / tagline+CTA / sitemap / find-us / QR —
+   separated by thin vertical divider lines. */
+.site-footer{ background:#fff; border-top: 1px solid #eee; width:100%; }
+.footer-top{
+  display:grid;
+  grid-template-columns: auto 1.3fr 1fr 1fr 1fr;
+  gap: 0;
+  padding: 56px 48px 40px;
+  max-width: 1470px;
+  margin: 0 auto;
+}
+.footer-top > .footer-col{
+  padding: 0 28px;
+  border-left: 1px solid #eee;
+}
+.footer-top > .footer-col:first-child{
+  padding-left: 0;
+  border-left: none;
+}
+.footer-top > .footer-col:last-child{
+  padding-right: 0;
+}
+.footer-logo-col{ display:flex; align-items:flex-start; }
+.footer-brand p{ font-size: 16px; color: var(--text-mid); margin: 0 0 18px; }
+.btn-teal{
+  display:inline-block;
+  background: var(--teal);
+  color:#fff;
+  padding: 12px 26px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  width: 200px;
+}
+.btn-teal:hover{ background: var(--teal-dark); }
+.btn-teal.full{ display:block; width:100%; text-align:center; border:none; cursor:pointer; font-family:inherit; }
+.footer-col h3{ font-size: 16px; margin-bottom: 0px; color: var(--text-dark); }
+.footer-col a, .footer-col p{ display:block; font-size: 16px; color: var(--text-mid); margin-bottom: 10px; }
+.footer-col p a{ white-space: nowrap; }
+.footer-col a{ margin-bottom: 0px; }
+.footer-col a:hover{ color: var(--teal); }
+.footer-col a.sub{ padding-left: 14px; font-size: 14px; }
+.submenu-label{ display:block; font-size: 14px; color: var(--text-mid); margin-bottom: 0px; }
+.footer-social-icons{ display:flex; gap: 10px; margin-top: 6px; margin-left: 10px;}
+.footer-social-icons img{ width: 21px; height: 21px; }
+.qr-col{ display:flex; flex-direction:column; gap: 18px; }
+.qr-item{ display:flex; align-items:center; gap: 10px; }
+.qr-item p{ margin: 0; font-size: 14px; }
+.footer-bottom{
+  border-top: 1px solid #eee;
+  padding: 18px 0;
+  text-align:center;
+  font-size: 14px;
+  color: var(--text-mid);
+}
+.footer-brand a,.footer-brand a:hover{
+  color: #fff;
+}
+.find-us{
+  display: flex;
+}
+.find-us a{
+  border-left: 1px solid #ccc;
+  padding-left: 10px;
+}
+/* ---------- Secondary-page hero ---------- */
+.page-hero{ padding: 48px 0; }
+.page-hero-inner{
+  display:flex;
+  gap: 48px;
+  align-items:center;
+}
+.page-hero-photo{
+  flex: 1 1 50%;
+  height: 550px;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.page-hero-photo img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+  transform-origin: center;
+  will-change: transform;
+}
+.page-hero-text{ flex: 1 1 50%; }
+.page-hero-text .eyebrow{ font-size: 74px; font-weight: 200; color:#ccc; margin: 0 0 10px; letter-spacing: 2px;line-height: 1; }
+.page-hero-text h2{ font-size: 31px; margin-bottom: -20px; }
+.page-hero-text p{ color: var(--text-mid); font-size: 17px; }
+
+/* Page-hero heading block: two groups slide up into place on page load —
+   (1) the big English eyebrow word, and (2) the Chinese title + intro
+   paragraph moving together as ONE unit (same mask, same timing, no gap
+   between them). Each group sits in its own .reveal-mask (overflow:hidden)
+   so it's completely hidden outside its own box while travelling up from
+   below — it never appears above or below its normal position, only
+   "grows" into view. The second group is slightly delayed after the first. */
+.page-hero-text .reveal-mask{ overflow: hidden;max-width: 470px;margin: 0 auto; }
+.page-hero-text .reveal-up{
+  transform: translateY(100%);
+  opacity: 0;
+  animation: pageHeroTextReveal 2s cubic-bezier(.16,.84,.44,1) forwards;
+}
+.page-hero-text .reveal-mask:nth-of-type(1) .reveal-up{ animation-delay: .05s; }
+.page-hero-text .reveal-mask:nth-of-type(2) .reveal-up{ animation-delay: .22s; }
+@keyframes pageHeroTextReveal{
+  to{ transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce){
+  .page-hero-text .reveal-up{ animation: none; transform: none; opacity: 1; }
+}
+
+/* ---------- About: quotes & clients ---------- */
+.quote-section{ padding: 20px 0 150px; text-align:center; }
+.section-desc{ max-width: 760px; margin: 0 auto 40px; color: var(--text-mid); font-size: 16px; }
+.quote-cards{ display:grid; grid-template-columns: repeat(3,1fr); gap: 24px; text-align:left; }
+.quote-card{ border: 1px solid #e5e1da; border-radius: 0px; padding: 28px; transition: transform .25s ease, box-shadow .25s ease; }
+.quote-mark{ color: var(--teal); font-size: 124px; font-weight: bolder; margin:0px 0 -64px; line-height:1; font-family: sans-serif;}
+.quote-card h4{ display:inline; font-size: 28px; color: var(--teal); margin-right: 8px; }
+.quote-sub{ color: var(--text-mid); font-size: 16px; margin: -8px 0 15px; padding-bottom: 15px; border-bottom: 1px #ccc solid;}
+.quote-card > p:last-child{ font-size: 16px; color: var(--text-mid); }
+.clients-section{ padding: 0 0 150px; text-align:center; }
+.client-logos{ display:flex; flex-wrap:wrap; justify-content:space-between; gap: 24px; }
+.client-logo{ width: 205px; height: 198px; border: 1px solid #e5e1da; display:flex; align-items:center; justify-content:center; transition: transform .25s ease, box-shadow .25s ease; }
+
+/* ---------- Service: testimonials & features ---------- */
+.testimonial-section{ padding: 20px 0 60px; text-align:center; }
+.testimonial-cards{ display:grid; grid-template-columns: repeat(2,1fr); gap: 100px; text-align:center; margin-top: 60px;}
+.testimonial-card{ background: var(--bg-alt); border-radius: 6px; padding: 40px 60px; transition: transform .25s ease, box-shadow .25s ease;    border: 1px #dbd8d4 solid; }
+.avatar{ width: 130px; height: 130px; border-radius: 50%; margin: -100px auto 16px; object-fit: cover;    border: 1px #ccc solid; }
+.testimonial-card h4{ font-size: 28px; }
+.testimonial-role{ color: var(--teal); font-size: 16px;  margin: -7px 0 16px; }
+.testimonial-card > p:last-child{ font-size: 16px; color: var(--text-mid); text-align:left; }
+.feature-section{ padding: 24px 0 64px; }
+.feature-cards{ display:grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.feature-card{ border: 1px solid #e5e1da; border-radius: 6px; padding: 28px; transition: transform .25s ease, box-shadow .25s ease; }
+.feature-card h4{ color: var(--teal); font-size: 24px; margin-bottom: 16px; }
+.feature-card li{ font-size: 16px; color: var(--text-mid); margin-bottom: 14px; }
+
+/* ---------- Buy: channels ---------- */
+.logo-box{max-width: 760px;margin: 0 auto;}
+.channel-section{ padding: 20px 0 64px; text-align:center; }
+.channel-grid{ display:flex; flex-wrap:wrap; justify-content:left; gap: 80px; margin-bottom: 48px; }
+.channel-logo,.channel-logo-offline{ display:flex; flex-direction:column; align-items:center; gap: 10px; width: 120px; }
+.channel-logo img, .channel-logo-offline img{ width: 120px; height: 120px; object-fit: cover; border-radius: 28px; transition: transform .25s ease, box-shadow .25s ease; }
+.channel-grid.small img{ width: 120px; height: 120px; }
+.channel-logo span, .channel-logo-offline span{ font-size: 20px; color: #3c3c3c;margin-top: 6px; line-height: 1.2;}
+
+/* Consistent card hover-enlarge treatment: used across all pages'
+   card-grid style content (quote cards, testimonials, feature cards,.channel-grid.small img
+   client/channel logos) so the interaction feels the same everywhere. */
+.quote-card:hover,
+.testimonial-card:hover,
+.feature-card:hover,
+.client-logo:hover{
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(0,0,0,.1);
+}
+.channel-logo:hover img{
+  transform: translateY(-4px) scale(1.2);
+}
+
+/* ---------- FAQ ---------- */
+.faq-section{ padding: 20px 0 64px; }
+.faq-list{ max-width: 972px; margin: 0 auto; }
+.faq-item{ display:flex; gap: 46px; padding: 28px 0; border-bottom: 1px solid #dde8eb; }
+.faq-num{ font-size: 67px; font-weight: 200; color: #505050; flex: 0 0 70px;margin-top: -27px; }
+.faq-q{ color: var(--teal); font-weight: 500; font-size: 18px;margin: 0;}
+.faq-a{ color: var(--text-mid); font-weight: 500; font-size: 18px;margin: 0 0 40px; }
+
+/* ---------- Contact page ---------- */
+.contact-section{ padding: 60px 0 200px; }
+.contact-grid{ display:grid; grid-template-columns: 1fr 1.4fr; align-items:start; }
+.contact-info h3{ font-size: 36px; margin-bottom: 16px; }
+.contact-info p{ margin: 8px 0; font-size: 16px; color: var(--text-mid); }
+.contact-form{ display:flex; flex-direction:column; gap: 16px; }
+.contact-form label{ display:flex; flex-direction:column; gap: 6px; font-size: 16px; color: var(--text-mid); }
+.contact-form input, .contact-form select, .contact-form textarea{
+  font-family: inherit; font-size: 14px; padding: 10px 12px;
+  border: 1px solid #ddd; border-radius: 5px; color: var(--text-dark);
+}
+.contact-form textarea{ resize: vertical; }
+.contact-info{max-width: 270px;margin-bottom: 60px;}
+
+/* ---------- Contact form submit notice (popup) ---------- */
+.form-notice{
+  display:none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.45);
+  padding: 20px;
+}
+.form-notice.show{ display:flex; }
+.form-notice-box{
+  background:#fff;
+  border-radius: 8px;
+  max-width: 440px;
+  width: 100%;
+  padding: 28px 24px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.2);
+  text-align:center;
+}
+.form-notice-box p{
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-dark);
+  margin: 0 0 20px;
+  white-space: pre-line;
+}
+.form-notice-close{
+  font-family: inherit;
+  font-size: 14px;
+  background: var(--teal);
+  color:#fff;
+  border:none;
+  border-radius: 4px;
+  padding: 10px 28px;
+  cursor:pointer;
+}
+.form-notice-close:hover{ background: var(--teal-dark); }
+
+/* =========================================================
+   RWD breakpoints — matches the original site's tablet /
+   mobile behaviour (stacked layout, collapsed nav row)
+   ========================================================= */
+@media (max-width: 1024px){
+  .bar{ padding: 0 28px; }
+  .cat-row{ flex-direction: column; gap: 24px;        width: 90%; }
+  .cat-label{ flex: none; }
+  .mainbar-inner{ justify-content: center; text-align:center; }
+  .tagline{ order: 3; text-align:center; }
+  .home-contact-info{ padding: 40px 24px; }
+  .footer-top{ grid-template-columns: 1fr 1fr;}
+  .footer-top > .footer-col{ border-left:none; padding:0; }
+  .page-hero-inner{ flex-direction: column-reverse; }
+  .page-hero-photo{ height: 320px; width:100%; }
+  .quote-cards{ grid-template-columns: 1fr; }
+  .testimonial-cards{ grid-template-columns: 1fr; }
+  .feature-cards{ grid-template-columns: 1fr; }
+  .contact-grid{ grid-template-columns: 1fr; }
+  .topbar-inner{
+    display: none;
+  }
+  .logo {
+      position: relative;
+      top: 40px;
+  }
+  .hero-product {
+    left: 9.6%;
+    top: 11.2%;
+    z-index: 3;
+  }
+}
+
+
+@media (max-width: 767px){
+  .bar{ padding: 0 18px; }
+  .topbar-inner{ justify-content:center; gap: 14px; font-size: 12px;display: none; }
+  .topbar-inner a{ border-left: none; padding: 0; }
+  
+
+  /* Collapse the top nav into a hamburger menu on phone-width screens. */
+  .mainbar-inner{justify-content: space-between; text-align:left; position: relative; }
+  .logo{ align-items:center; margin:0;top: 0px; left: calc(50% - 45px); }
+  .tagline{ display:none; }
+  .nav-toggle{ display:flex; justify-content: start;}
+  .mainnav{
+    display:none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    font-size: 16px;
+    order: 5;
+    margin-top: 14px;
+    color: #909090;
+  }
+  .mainnav.open{
+    display: inline-block;
+    background-color: #4aa784;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    bottom: -100vh;
+    padding: 70px 20px;
+    /* Drops downward into place while fading up from fully transparent.
+       This has to be a keyframe animation rather than a transition: the
+       panel switches from display:none, and transitions cannot animate
+       across a display change, whereas an animation runs on the frame the
+       element becomes visible. */
+    animation: mainnavDrop .4s cubic-bezier(.16,.84,.44,1) both;
+  }
+  @keyframes mainnavDrop{
+    from{ opacity: 0; transform: translateY(100px); }
+    to  { opacity: 1; transform: translateY(0); }
+  }
+  .mainnav a{
+    width: 100%;
+    padding: 14px 20px;
+    border-bottom: 1px solid #fff;
+    margin: 4px 0;
+    display: block;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .logo-img{ width: 68px;margin-top: 10px; }
+  .hero{ padding: 32px 0 140px; }
+  .cat-products{ grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
+  .product-img{ height: 300px; }
+  .about{ padding: 60px 60px; text-align:center; }
+  .about-content{ margin: 0 auto; }
+  .about-content p{ text-align:left; }
+  .tagline-banner{ padding: 60px 0; }
+  .tagline-bg{ background-attachment: scroll; }
+  .tagline-content p{ font-size: 20px; }
+  .section-title{ font-size: 36px;font-weight: normal; }
+  .home-contact-inner{ flex-direction: column; text-align:left;max-width: 85%; }
+  .home-contact-photo{ min-height: 200px; }
+  .social-row{ justify-content:left; }
+  .footer-top{ grid-template-columns: 1fr; text-align:left; }
+  .footer-top > .footer-col{
+    border-left:none;
+    padding: 30px 0;
+    border-top: 1px solid #eee;
+  }
+  .footer-top > .footer-col:first-child{ padding-top:0; border-top:none;display: none; }
+  .contact-section { padding: 60px 0 60px;}
+  .footer-logo-col{ justify-content:left; }
+  .footer-social-icons{ justify-content:center;margin-top: 0; }
+  .qr-col{ align-items:last flex-start; }
+  .qr-item{ justify-content:center; }
+  .client-logos{ gap: 20px;justify-content: center; }
+  .client-logo{ width: 150px; height: 145px; }
+  .channel-grid{ gap: 30px;justify-content: center; }
+  .faq-item{ gap: 10px; }
+  .faq-num{ flex-basis: 44px; font-size: 28px; padding: 20px 0;}
+  .page-hero{ border-bottom: 1px #ccc solid;}
+  .site-header{
+    height: 95px;
+  }
+  .icon-swap img {
+    top: 0px;
+  }
+      .hero-product {
+        left: 0;
+        top: -30px;
+        z-index: 3;
+        position: relative;
+    }
+    .scroll-indicator {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+    opacity: .85;
+    top: 480px;
+  }
+  .site-footer {
+    background: #d6d6d633;
+    border-top: none;
+    width: 90%;
+    margin: 0 auto 20px auto;
+  }
+  .container {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 0 0px;
+  }
+  .clients-section{border-top: 1px #eee solid; padding: 0 0 60px;}
+  .quote-section { padding: 20px 0 60px; text-align: center; border-bottom: 1px #eee solid;}
+  .testimonial-section{border-bottom: 1px #eee solid;}
+  .product-card,.feature-card li,.testimonial-card{font-size: 18px;}
+  .avatar{width: 100px;height: 100px;}
+  .channel-logo img{width: 80px;}
+  .channel-grid.small img{width: 80px;}
+  .contact-info {
+    max-width: 270px;
+    margin-bottom: 60px;
+    border-bottom: 1px #eee solid;
+    padding-bottom: 60px;
+  }
+}
+
+/* ---------- Product quick-view lightbox ----------
+   Opens over the page as a light full-screen panel: product photo on the
+   left, its name / pack size / waist range and full feature list on the
+   right, with prev-next arrows pinned to the side edges. The overlay markup
+   sits at the end of <body> and stays `hidden` until it is needed, so it
+   costs nothing on pages that never open it. */
+.product-category .product-img{ cursor: zoom-in; }
+.product-category .product-img:focus-visible{
+  outline: 2px solid var(--teal-dark);
+  outline-offset: 3px;
+}
+.lightbox{
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 88px 48px;
+  background: #f2f0ee;
+  animation: lightboxFade .22s ease both;
+}
+/* `display:flex` above would otherwise defeat the `hidden` attribute. */
+.lightbox[hidden]{ display: none; }
+
+.lightbox-panel{
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 4vw, 60px);
+  width: 100%;
+  max-width: 1150px;
+  max-height: 100%;
+  animation: lightboxZoom .26s cubic-bezier(.16,.84,.44,1) both;
+}
+.lightbox-media{
+  flex: 0 1 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.lightbox-media img{
+  max-width: 100%;
+  max-height: calc(100vh - 170px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.lightbox-info{
+  flex: 1 1 56%;
+  min-width: 0;
+  /* A long feature list scrolls inside this column rather than growing the
+     panel past the viewport — the page itself stays locked while open. */
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--text-mid);
+}
+/* The three heading lines mirror the product card: name, pack size, waist range. */
+.lightbox-title{
+  font-size: clamp(21px, 2.1vw, 28px);
+  line-height: 1.25;
+  color: var(--text-dark);
+  margin: 0;
+}
+.lightbox-pack{
+  margin: 6px 0 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-mid);
+}
+.lightbox-fit{
+  margin: 6px 0 0;
+  color: var(--teal);
+  font-weight: bolder;
+}
+.lightbox-features{
+  margin: 8px 0 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+.lightbox-features li{ margin-bottom: 6px; color: var(--text-mid); }
+.lightbox-count{
+  margin: 22px 0 0;
+  font-size: 14px;
+  letter-spacing: .04em;
+  color: #9a9a9a;
+}
+
+.lightbox-close,
+.lightbox-nav{
+  position: absolute;
+  padding: 0;
+  border: 0;
+  border-radius: 0%;
+  background: rgba(255,255,255,.7);
+  color: #5c5c5c;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease, color .15s ease;
+}
+.lightbox-close:hover, .lightbox-close:focus-visible,
+.lightbox-nav:hover,   .lightbox-nav:focus-visible{
+  background: var(--teal-dark);
+  color: #fff;
+}
+.lightbox-close{
+  top: 16px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  font-size: 28px;
+  line-height: 1;
+}
+.lightbox-nav{
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+}
+.lightbox-prev{ left: 18px; }
+.lightbox-next{ right: 18px; }
+
+@keyframes lightboxFade{ from{ opacity: 0; } to{ opacity: 1; } }
+@keyframes lightboxZoom{
+  from{ opacity: 0; transform: scale(.94); }
+  to  { opacity: 1; transform: scale(1); }
+}
+
+/* Tablet: keep the two columns but reclaim the side gutters. */
+@media (max-width: 1024px){
+  .lightbox{ padding: 68px 64px 40px; }
+  .lightbox-nav{ width: 44px; height: 44px; }
+  .lightbox-prev{ left: 10px; }
+  .lightbox-next{ right: 10px; }
+}
+/* Phone: stack the photo above the details and let the whole panel scroll. */
+@media (max-width: 767px){
+  .lightbox{ padding: 60px 16px 20px; align-items:center; }
+  .lightbox-panel{
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .lightbox-media{ flex: 0 0 auto; }
+  .lightbox-media img{ max-height: 42vh; margin: 0 auto; }
+  .lightbox-info{
+    flex: 0 0 auto;
+    max-height: none;
+    overflow: visible;
+  }
+  .lightbox-features li{ font-size: 15px; }
+  /* With the panel stacked, centring the arrows on the viewport would leave
+     them floating beside the text. Pin them to the middle of the photo
+     instead (60px top padding + half of the 42vh image). */
+  .lightbox-nav{
+    width: 40px;
+    height: 40px;
+    top: calc(60px + 21vh);
+  }
+  .lightbox-prev{ left: 4px;z-index: 999; }
+  .lightbox-next{ right: 4px; z-index: 999;}
+  .lightbox-close{ top: 10px; right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .mainnav.open,
+  .lightbox,
+  .lightbox-panel{ animation: none; }
+}
