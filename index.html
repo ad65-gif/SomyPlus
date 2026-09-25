@@ -468,6 +468,7 @@
      clicked; the script at the bottom of this page fills it in and drives
      the prev/next arrows. -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle" hidden>
+  <div class="lightbox-bg" id="lightboxBg" aria-hidden="true"></div>
   <button type="button" class="lightbox-close" id="lightboxClose" aria-label="關閉">&times;</button>
   <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="上一個產品">
     <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
@@ -689,25 +690,85 @@
     });
     elFeat.hidden = !it.features.length;
     elCount.textContent = (current + 1) + ' / ' + n;
+    // Tag the pieces for the reveal (.lb-reveal in style.css): the photo
+    // goes first (--i 0), and every text line shares --i 1 so the text
+    // block fades in as one, a beat after the photo.
+    var photo = elImg.parentNode;
+    var texts = [elTitle, elPack, elFit]
+      .concat(Array.prototype.slice.call(elFeat.children), [elCount]);
+    photo.classList.add('lb-reveal');
+    photo.style.setProperty('--i', 0);
+    texts.forEach(function(el){
+      el.classList.add('lb-reveal');
+      el.style.setProperty('--i', 1);
+    });
     // Long feature lists scroll inside the panel; start each product at the top.
     var info = elFeat.parentNode;
     if (info) info.scrollTop = 0;
   }
 
+  /* Open/close animation (see .lightbox-bg in style.css), timed like the
+     Modesto menu: 0.5s unfold + 0.5s content fade on open, the reverse on
+     close. `hidden` is only set again once the full 1s close has played. */
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var CLOSE_MS = 1000;  // content fade (.5s) + background fold (.5s)
+  var closeTimer = null;
+  var isOpen = false;
+
   function open(i){
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    cancelSwitch();
+    lb.style.removeProperty('--lb-base');   // first reveal waits for the unfold
     lastFocus = items[i] ? items[i].box : null;
     show(i);
+    switchTarget = current;
+    if (lb.hidden) scrollLock.on();
     lb.hidden = false;
-    scrollLock.on();
-    btnClose.focus();
+    isOpen = true;
+    void lb.offsetWidth;          // commit the folded state before unfolding
+    lb.classList.add('is-open');
+    btnClose.focus({ preventScroll: true });
   }
 
-  function close(){
-    if (lb.hidden) return;
+  function finishClose(){
+    closeTimer = null;
     lb.hidden = true;
     elImg.removeAttribute('src');
     scrollLock.off();
-    if (lastFocus) { lastFocus.focus(); lastFocus = null; }
+  }
+
+  function close(){
+    if (!isOpen) return;
+    isOpen = false;
+    cancelSwitch();
+    lb.classList.remove('is-open');
+    var target = items[current] ? items[current].box : lastFocus;
+    if (target) target.focus({ preventScroll: true });
+    lastFocus = null;
+    if (reduceMotion) finishClose();
+    else closeTimer = setTimeout(finishClose, CLOSE_MS);
+  }
+
+  /* Prev/next inside the open lightbox: the current product is hidden at
+     once (no fade-out), the content is swapped, and the new product runs the
+     same fade-in as on open (photo first, then the text block) — without the .5s wait,
+     since the background is already flat (--lb-base: 0s). Pressing again
+     mid-reveal simply restarts the reveal on the next product. */
+  var switchTarget = 0;
+
+  function cancelSwitch(){
+    lb.classList.remove('is-switching');
+  }
+
+  function go(i){
+    if (!isOpen) return;
+    show(i);
+    switchTarget = current;
+    if (reduceMotion) return;
+    lb.classList.add('is-switching');    // snap everything to hidden
+    lb.style.setProperty('--lb-base', '0s');
+    void lb.offsetWidth;                 // commit the hidden state
+    lb.classList.remove('is-switching'); // ...then replay the fade-in
   }
 
   items.forEach(function(it, i){
@@ -724,19 +785,19 @@
   });
 
   btnClose.addEventListener('click', close);
-  btnPrev.addEventListener('click', function(){ show(current - 1); });
-  btnNext.addEventListener('click', function(){ show(current + 1); });
+  btnPrev.addEventListener('click', function(){ go(switchTarget - 1); });
+  btnNext.addEventListener('click', function(){ go(switchTarget + 1); });
 
   // Clicking the empty area around the panel closes; clicking the panel does not.
   lb.addEventListener('click', function(e){
-    if (e.target === lb) close();
+    if (e.target === lb || e.target.id === 'lightboxBg') close();
   });
 
   document.addEventListener('keydown', function(e){
-    if (lb.hidden) return;
+    if (!isOpen) return;
     if (e.key === 'Escape' || e.key === 'Esc') { close(); return; }
-    if (e.key === 'ArrowLeft')  { show(current - 1); return; }
-    if (e.key === 'ArrowRight') { show(current + 1); return; }
+    if (e.key === 'ArrowLeft')  { go(switchTarget - 1); return; }
+    if (e.key === 'ArrowRight') { go(switchTarget + 1); return; }
     if (e.key === 'Tab') {
       // Keep Tab cycling between the overlay's own three buttons.
       e.preventDefault();
