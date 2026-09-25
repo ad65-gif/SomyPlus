@@ -472,7 +472,7 @@ a:hover .icon-swap .icon-hover{ opacity: 1; }
   font-size: 26px;
   line-height: 1.35;
   margin-bottom: 10px;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
   border-bottom: 1px #909090 solid;
   padding-bottom: 10px;
@@ -990,80 +990,26 @@ a:hover .icon-swap .icon-hover{ opacity: 1; }
   align-items: center;
   justify-content: center;
   padding: 72px 88px 48px;
-}
-/* Open / close sequence ported from the Modesto template's overlay menu
-   (.overlay / .animation-wrapper / .content-wrapper, 0.5s ease-out):
-     open:  the background layer unfolds from its folded 3D state to flat
-            (0-0.5s), then the content fades in (0.5-1s).
-     close: the content fades out first (0-0.5s), then the background folds
-            back away (0.5-1s); the script re-hides the overlay at 1s.
-   Each rule's delay is set for the direction it applies to: the base rules
-   describe closing, the .is-open rules describe opening. */
-.lightbox-bg{
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: rgba(242, 240, 238);
-  transform: perspective(1000px) rotateX(66deg) scale(0.3) skewX(32deg) skewY(-40deg) rotateY(12deg);
-  transition: transform .5s ease-out .5s;
-}
-.lightbox.is-open .lightbox-bg{
-  transform: perspective(1000px) rotateX(0deg) scale(1) skewX(0deg) skewY(0deg) rotateY(0deg);
-  transition-delay: 0s;
-}
-.lightbox-close,
-.lightbox-nav{
-  opacity: 0;
-}
-.lightbox.is-open .lightbox-close,
-.lightbox.is-open .lightbox-nav{
-  opacity: 1;
-}
-/* Content reveal: once the background has unfolded (.5s), the product photo
-   drops down into place while fading in, and the whole text block follows
-   as one piece 150ms later. The script tags the photo --i:0 and every text
-   line --i:1. On close they all fade back out together, as Modesto's
-   content layer does. */
-.lb-reveal{
-  opacity: 0;
-  transform: translateY(-150px);
-  transition: opacity .35s ease-out, transform .35s ease-out;
-}
-.lightbox.is-open .lb-reveal{
-  opacity: 1;
-  transform: none;
-  transition-delay: calc(var(--lb-base, .5s) + var(--i, 0) * 150ms);
-}
-/* Switching product with the arrows: the script flicks this class on for a
-   single frame to snap every piece back to hidden with no transition, then
-   removes it so the rule above replays the fade-in on the new product. */
-.lightbox.is-open.is-switching .lb-reveal{
-  opacity: 0;
-  transform: translateY(-48px);
-  transition: none;
-}
-.lightbox.is-open .lightbox-close,
-.lightbox.is-open .lightbox-nav{
-  transition: opacity .5s ease-out .5s, background .15s ease, color .15s ease;
+  background: #f2f0ee;
+  animation: lightboxFade .22s ease both;
 }
 /* `display:flex` above would otherwise defeat the `hidden` attribute. */
 .lightbox[hidden]{ display: none; }
 
 .lightbox-panel{
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: clamp(24px, 4vw, 60px);
   width: 100%;
   max-width: 1150px;
   max-height: 100%;
+  animation: lightboxZoom .26s cubic-bezier(.16,.84,.44,1) both;
 }
 .lightbox-media{
   flex: 0 1 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   min-width: 0;
 }
 .lightbox-media img{
@@ -1123,12 +1069,11 @@ a:hover .icon-swap .icon-hover{ opacity: 1; }
   border-radius: 0%;
   background: rgba(255,255,255,.7);
   color: #5c5c5c;
-  z-index: 2;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity .5s ease-out, background .15s ease, color .15s ease;
+  transition: background .15s ease, color .15s ease;
 }
 .lightbox-close:hover, .lightbox-close:focus-visible,
 .lightbox-nav:hover,   .lightbox-nav:focus-visible{
@@ -1152,6 +1097,11 @@ a:hover .icon-swap .icon-hover{ opacity: 1; }
 .lightbox-prev{ left: 18px; }
 .lightbox-next{ right: 18px; }
 
+@keyframes lightboxFade{ from{ opacity: 0; } to{ opacity: 1; } }
+@keyframes lightboxZoom{
+  from{ opacity: 0; transform: scale(.94); }
+  to  { opacity: 1; transform: scale(1); }
+}
 
 /* Tablet: keep the two columns but reclaim the side gutters. */
 @media (max-width: 1024px){
@@ -1171,12 +1121,11 @@ a:hover .icon-swap .icon-hover{ opacity: 1; }
     overscroll-behavior: contain;
   }
   .lightbox-media{ flex: 0 0 auto; }
-  .lightbox-media img{ max-width: 90%;margin: 0 auto; }
+  .lightbox-media img{ max-height: 42vh; margin: 0 auto; }
   .lightbox-info{
     flex: 0 0 auto;
     max-height: none;
     overflow: visible;
-    display: none;
   }
   .lightbox-features li{ font-size: 15px; }
   /* With the panel stacked, centring the arrows on the viewport would leave
@@ -1185,20 +1134,15 @@ a:hover .icon-swap .icon-hover{ opacity: 1; }
   .lightbox-nav{
     width: 40px;
     height: 40px;
-    /* top: calc(60px + 21vh); */
+    top: calc(60px + 21vh);
   }
   .lightbox-prev{ left: 4px;z-index: 999; }
   .lightbox-next{ right: 4px; z-index: 999;}
   .lightbox-close{ top: 10px; right: 10px; }
-  .lb-reveal {
-    transform: translateY(-50px);
-  }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .mainnav.open{ animation: none; }
-  .lightbox-bg, .lb-reveal, .lightbox-close, .lightbox-nav,
-  .lightbox.is-open .lightbox-bg, .lightbox.is-open .lb-reveal,
-  .lightbox.is-open.is-switching .lb-reveal,
-  .lightbox.is-open .lightbox-close, .lightbox.is-open .lightbox-nav{ transition: none; }
+  .mainnav.open,
+  .lightbox,
+  .lightbox-panel{ animation: none; }
 }
